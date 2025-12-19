@@ -377,7 +377,7 @@ On first run, PuppeteerSharp will download a compatible Chromium build automatic
 func start
 ```
 
- ![Architecture](Images/first-run.png)
+ ![Architecture](Images/first-run.PNG)
 
 **Step 7: Test the System**
 
@@ -395,9 +395,11 @@ Expected behavior:
 
 - Unsafe URLs return 400
 
+ ![Architecture](Images/Register-post-test-bad-url.PNG)
+
 - Safe URLs insert into dbo.Websites
 
- ![Architecture](Images/Register-post-test.png)
+ ![Architecture](Images/Register-post-test.PNG)
 
 - Initial snapshot and PDF are generated automatically
 
