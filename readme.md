@@ -278,3 +278,129 @@ At the center is the SQL Database (dbo.Websites, dbo.Snapshots) acting as the sy
 	- No infrastructure management
 	
 	- Automatic scaling based on triggers
+
+# Local Installation & Setup Guide
+
+Prerequisites
+
+Ensure the following are installed on your machine:
+
+- Required
+
+	- .NET SDK 8.0+  https://dotnet.microsoft.com/download
+	
+	- Azure Functions Core Tools v4 https://learn.microsoft.com/azure/azure-functions/functions-run-local
+	
+	- SQL Server (LocalDB or SQL Server Express) https://learn.microsoft.com/sql/database-engine/install-windows
+	
+	- Azurite (Azure Blob Storage emulator) https://learn.microsoft.com/azure/storage/common/storage-use-azurite
+	
+	- Node.js 18+ (required for Puppeteer / Chromium) https://nodejs.org
+
+- Optional (recommended)
+
+	- Azure Data Studio or SQL Server Management Studio (SSMS)
+	
+	- Visual Studio 2022 or VS Code
+
+ 
+**Step 1: Clone the Repository**
+```
+git clone https://github.com/<your-username>/WebsiteWatcher.git
+cd WebsiteWatcher
+
+```
+**Step 2: Configure Local Settings**
+
+Create a local.settings.json file in the project root (or update the existing one):
+
+```
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "GoogleSafeBrowsingApiKey": "<YOUR_GOOGLE_SAFE_BROWSING_API_KEY>"
+  },
+  "ConnectionStrings": {
+    "WebsiteWatcher": "Server=(localdb)\\MSSQLLocalDB;Database=WebsiteWatcher;Trusted_Connection=True;"
+  }
+}
+```
+Notes
+
+- AzureWebJobsStorage uses Azurite
+
+- WebsiteWatcher connection string points to LocalDB
+
+- You must supply a valid Google Safe Browsing API key
+
+**Step 3: Set Up the Database**
+
+- Create a new database called WebsiteWatcher
+
+- Execute the SQL script:
+```
+Sql/create-complete-db-setup.sql
+```
+This script:
+
+- Creates dbo.Websites and dbo.Snapshots
+
+- Enables SQL Change Tracking
+
+- Sets required keys and defaults
+
+**Step 4: Start Azurite (Blob Storage Emulator)**
+
+If using Azurite via command line:
+```
+azurite
+```
+Or start it from VS Code if installed as an extension.
+
+This provides:
+
+- Blob Storage endpoint
+
+- Local container support (pdfs will be created automatically)
+
+**Step 5: Restore Dependencies**
+```
+dotnet restore
+```
+On first run, PuppeteerSharp will download a compatible Chromium build automatically.
+
+**Step 6: Run the Azure Functions App**
+
+```
+func start
+```
+
+**Step 7: Test the System**
+
+Register a Website
+```
+POST http://localhost:7071/api/Register
+Content-Type: application/json
+
+{
+  "url": "https://example.com",
+  "xPathExpression": "//body"
+}
+```
+Expected behavior:
+
+- Unsafe URLs return 400
+
+- Safe URLs insert into dbo.Websites
+
+- Initial snapshot and PDF are generated automatically
+
+Query Recent Websites
+
+```
+GET http://localhost:7071/api/Query
+
+```
+Returns websites with recent snapshots.
