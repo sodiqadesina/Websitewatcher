@@ -2,7 +2,7 @@
 Overview
 
 WebsiteWatcher is an event-driven website monitoring system built using Azure Functions (.NET 8 – isolated worker).
-It allows users to register websites for monitoring, captures structured snapshots of page content, detects changes over time, and generates immutable PDF artifacts when changes occur — all while enforcing URL safety via Google Safe Browsing.
+It allows users to register websites for monitoring, captures structured snapshots of page content, detects changes over time, and generates immutable PDF artifacts when changes occur, all while enforcing URL safety via Google Safe Browsing.
 
 The system is intentionally designed to showcase:
 
@@ -33,7 +33,7 @@ At a high level, the architecture consists of:
 - External threat intelligence via Google Safe Browsing
 
 The system is event-driven, not request-chained.
-Functions do not directly call each other — they react to events and state changes, which improves decoupling and scalability.
+Functions do not directly call each other, they react to events and state changes, which improves decoupling and scalability.
 
 # Core Components and Responsibilities
 
